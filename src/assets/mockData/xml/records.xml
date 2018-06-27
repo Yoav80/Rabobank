@@ -1,0 +1,72 @@
+<records>
+  <record reference="168036">
+    <accountNumber>NL91RABO0315273637</accountNumber>
+    <description>Tickets for Rik Bakker</description>
+    <startBalance>85.69</startBalance>
+    <mutation>-19.48</mutation>
+    <endBalance>66.21</endBalance>
+  </record>
+  <record reference="168512">
+    <accountNumber>NL90ABNA0585647886</accountNumber>
+    <description>Flowers from Peter King</description>
+    <startBalance>5429</startBalance>
+    <mutation>-939</mutation>
+    <endBalance>6368</endBalance>
+  </record>
+  <record reference="102899">
+    <accountNumber>NL56RABO0149876948</accountNumber>
+    <description>Tickets from Rik King</description>
+    <startBalance>72.1</startBalance>
+    <mutation>-38.33</mutation>
+    <endBalance>33.77</endBalance>
+  </record>
+  <record reference="144704">
+    <accountNumber>NL46ABNA0625805417</accountNumber>
+    <description>Tickets for Willem Dekker</description>
+    <startBalance>82.71</startBalance>
+    <mutation>-20.01</mutation>
+    <endBalance>62.7</endBalance>
+  </record>
+  <record reference="137009">
+    <accountNumber>NL74ABNA0248990274</accountNumber>
+    <description>Candy for Jan Dekker</description>
+    <startBalance>69.19</startBalance>
+    <mutation>+33.7</mutation>
+    <endBalance>102.89</endBalance>
+  </record>
+  <record reference="105792">
+    <accountNumber>NL43AEGO0773393871</accountNumber>
+    <description>Subscription from Vincent de Vries</description>
+    <startBalance>45.97</startBalance>
+    <mutation>-16.79</mutation>
+    <endBalance>29.18</endBalance>
+  </record>
+  <record reference="116500">
+    <accountNumber>NL69ABNA0433647324</accountNumber>
+    <description>Clothes from Willem Dekker</description>
+    <startBalance>10.1</startBalance>
+    <mutation>-0.3</mutation>
+    <endBalance>9.8</endBalance>
+  </record>
+  <record reference="162854">
+    <accountNumber>NL90ABNA0585647886</accountNumber>
+    <description>Candy from Richard de Vries</description>
+    <startBalance>103.79</startBalance>
+    <mutation>-34.11</mutation>
+    <endBalance>69.68</endBalance>
+  </record>
+  <record reference="180568">
+    <accountNumber>NL91RABO0315273637</accountNumber>
+    <description>Subscription for Daniël Theuß</description>
+    <startBalance>3980</startBalance>
+    <mutation>+1000</mutation>
+    <endBalance>4981</endBalance>
+  </record>
+  <record reference="132594">
+    <accountNumber>NL27SNSB0917829871</accountNumber>
+    <description>Flowers for Jan Theuß</description>
+    <startBalance>56.74</startBalance>
+    <mutation>+20.46</mutation>
+    <endBalance>77.2</endBalance>
+  </record>
+</records>
