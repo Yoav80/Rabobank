@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { StatementsService } from './statements.service';
+import { StatementsService } from './services/statements.service';
 import { StatementsBackendService } from './services/statementsBackend.service';
 import { StatementsComponent } from './statements.component';
 import { DemoMaterialModule } from '../../material/material.module'

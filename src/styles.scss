@@ -1,8 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import "./varaiables.scss";
 
 body { 
-  font-family: Roboto, Arial, sans-serif;
+  font-family: $font-family;
   margin: 0;
+}
+
+table {
+  width: 100%;
+  margin: auto;
+  min-width: 350px;
 }

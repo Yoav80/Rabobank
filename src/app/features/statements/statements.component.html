@@ -1,31 +1,12 @@
-<p>
-  statements works!
-</p>
-<app-list>
-    <app-list-item *ngFor="let item of statmentsService.statements | async">
-        <mat-card-header>
-            <mat-icon mat-card-avatar>swap_vert</mat-icon>
-            <mat-card-title>Account Number: {{item.accountNumber}}</mat-card-title>
-            <mat-card-subtitle>{{item.description}}</mat-card-subtitle>
-        </mat-card-header>
+<mat-toolbar class="primary">
+  <mat-toolbar-row>
+      <h2>Rabobank Customer Statement Processor</h2>  
+  </mat-toolbar-row>
+  
+  <mat-toolbar-row>
+    <span class="title-items">Valid items: {{numberOfValidItems}} </span>
+    <span class="title-items invalid">Invalid items: {{numberOfInvalidItems}} </span>
+  </mat-toolbar-row>
+</mat-toolbar>
 
-        <mat-card-content>
-          <span>{{item.startBalance}} </span>
-          <span>{{item.endBalance}} </span>
-          <span>{{item.mutation}} </span>
-        </mat-card-content>
-
-        <mat-grid-list cols="3">
-            <mat-grid-tile [style.border-right]="'1px dashed #ddd'">
-              John
-            </mat-grid-tile>
-            <mat-grid-tile [style.border-right]="'1px dashed #ddd'">
-              Paul
-            </mat-grid-tile>
-            <mat-grid-tile>
-              Ringo
-            </mat-grid-tile>
-        </mat-grid-list>
-      
-    </app-list-item>
-</app-list>
+<app-list [dataSource]="dataSource" [columnsDef]="displayedColumns"></app-list>

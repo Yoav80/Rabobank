@@ -1,3 +1,13 @@
-<mat-list>
-  <ng-content></ng-content>
-</mat-list>
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <th mat-header-cell mat-sort-header sticky *matHeaderCellDef>{{ getHeaderLabel(column) }}</th>
+        <td mat-cell *matCellDef="let element" [ngClass]="{'invalid': element.isValid === false}">
+            <label class="mobile-label">{{ getHeaderLabel(column) }}</label> 
+            <span>{{ element[column] }}</span>
+          </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
