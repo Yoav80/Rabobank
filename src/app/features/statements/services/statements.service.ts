@@ -35,6 +35,9 @@ export class StatementsService {
       field: 'reference',
       display: 'Reference'
     },{
+      field: 'isValid',
+      display: 'isValid'
+    },{
       field: 'accountNumber',
       display: 'Account'
     },{
@@ -49,9 +52,6 @@ export class StatementsService {
     },{
       field: 'mutation',
       display: 'Mutation'
-    },{
-      field: 'isValid',
-      display: 'isValid'
     }];
   }
 
