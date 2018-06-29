@@ -22,6 +22,5 @@ import { PapaParseModule } from 'ngx-papaparse';
     declarations: [
         StatementsComponent,
     ],
-  })
-  export class StatementsModule {}
-  
+})
+export class StatementsModule { }

@@ -1,23 +1,29 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import {MatTableDataSource, MatSort} from '@angular/material';
+import { Component, OnInit, Input, ViewChild, OnChanges } from '@angular/core';
+import { MatTableDataSource, MatSort } from '@angular/material';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
-export class ListComponent implements OnInit {  
+export class ListComponent implements OnInit, OnChanges {
   @Input() columnsDef: any[];
-  @Input() dataSource: MatTableDataSource<any>;
+  @Input() dataSource: any[];
   @ViewChild(MatSort) sort: MatSort;
 
+  public MatTableDataSource = new MatTableDataSource();
   public displayedColumns: any[];
+
   constructor() { }
 
   ngOnInit() {
-    // Hack for sorting - anti pattern
-    this.dataSource.sort = this.sort;
+    this.MatTableDataSource.sort = this.sort;
+    this.MatTableDataSource.data = this.dataSource;
     this.displayedColumns = this.columnsDef.map(col => col.field);
+  }
+
+  ngOnChanges() {
+    this.MatTableDataSource.data = this.dataSource;
   }
 
   getHeaderLabel(col) {

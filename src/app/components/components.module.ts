@@ -18,6 +18,5 @@ import { ListComponent } from './list/list.component';
         ListComponent,
         CommonModule
     ],
-  })
-  export class ComponentsModule {}
-  
+})
+export class ComponentsModule { }

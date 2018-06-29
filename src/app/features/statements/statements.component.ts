@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {StatementsService} from './services/statements.service';
 import {MatTableDataSource} from '@angular/material';
+import { StatementRecord } from './statements.models';
 
 @Component({
   selector: 'app-statements',
@@ -10,7 +11,7 @@ import {MatTableDataSource} from '@angular/material';
 export class StatementsComponent implements OnInit {
 
   public displayedColumns;
-  public dataSource = new MatTableDataSource();
+  public dataSource: any[];
   public numberOfValidItems = 0;
   public numberOfInvalidItems = 0;
 
@@ -19,11 +20,9 @@ export class StatementsComponent implements OnInit {
   ngOnInit() {
     this.displayedColumns = this.statmentsService.columns;
     this.statmentsService.statements.subscribe( data =>{
-      const dataArr = data.toArray();;
-      
-      this.dataSource.data = dataArr
+      const dataArr = data.toArray();
 
-      // Todo - this should come from redux
+      this.dataSource = dataArr;
       this.numberOfValidItems = dataArr.filter(item => item.isValid).length;
       this.numberOfInvalidItems = dataArr.filter(item => !item.isValid).length;
     });

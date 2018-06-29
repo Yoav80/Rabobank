@@ -1,4 +1,4 @@
-export interface StatementRecord  {
+export interface StatementRecord {
     reference: number;
     accountNumber: string;
     description: string;
@@ -6,4 +6,12 @@ export interface StatementRecord  {
     mutation: number;
     endBalance: number;
     isValid: boolean;
-  }
+    status: String;
+    errorCode: StatementErrorCode;
+}
+
+export enum StatementErrorCode {
+    noError = 0,
+    unbalanced = 1,
+    notUnique = 2
+}

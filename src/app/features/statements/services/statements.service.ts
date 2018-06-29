@@ -1,25 +1,19 @@
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http'; 
 import { Observable, BehaviorSubject } from 'rxjs';
 import { List } from 'immutable';
-import { NgxXml2jsonService } from 'ngx-xml2json';
-import {asObservable} from "../../../../helpers/asObservable";
+import { asObservable } from "../../../../helpers/asObservable";
 import { StatementsBackendService } from './statementsBackend.service';
 import { roundToTwo } from "../../../../helpers/roundToTwo";
-import { StatementRecord } from "../statements.models";
-const XML_RECORDS_URL = "../assets/mockData/xml/records.xml";
-const CSV_RECORDS_URL = "../assets/mockData/csv/records.csv";
+import { StatementRecord, StatementErrorCode } from "../statements.models";
 
 @Injectable()
 export class StatementsService {
 
   private _statements: BehaviorSubject<List<StatementRecord>> = new BehaviorSubject(List([]));
-  private statementsMap: { [s: string]: string; } = {};
+  private statementsMap: { [reference: string]: string; } = {};
 
-  constructor(private http: HttpClient,
-              private backend: StatementsBackendService, 
-              private ngxXml2jsonService: NgxXml2jsonService) {
+  constructor(private backend: StatementsBackendService) {
     this.loadInitialData();
   }
 
@@ -31,52 +25,43 @@ export class StatementsService {
   }
 
   public get columns() {
-    return [{
-      field: 'reference',
-      display: 'Reference'
-    },{
-      field: 'isValid',
-      display: 'isValid'
-    },{
-      field: 'accountNumber',
-      display: 'Account'
-    },{
-      field: 'description',
-      display: 'Description'
-    },{
-      field: 'startBalance',
-      display: 'Start Balance'
-    },{
-      field: 'endBalance',
-      display: 'End Balance'
-    },{
-      field: 'mutation',
-      display: 'Mutation'
-    }];
+    return [
+      { field: 'reference', display: 'Reference' }, 
+      { field: 'status', display: 'Status' },
+      { field: 'accountNumber', display: 'Account' }, 
+      { field: 'description', display: 'Description' }, 
+      { field: 'startBalance', display: 'Start Balance' },
+      { field: 'endBalance', display: 'End Balance' }, 
+      { field: 'mutation', display: 'Mutation' }
+    ];
   }
 
   /**
    * Load all statements (xml & csv)
    */
   private loadInitialData() {
-    this.statementsMap = {};
-    this.backend.getXMLStatements()
-      .then(statements => {
-        console.log('Recieved XML statments: ', statements);
-        this.handleNewStatements(statements);
-      })
-      .catch(err => {
-        console.error('Error loading xml statements', err);
-      })
+    this.loadCsvStatements();
+    this.loadXMLStatements();
+  }
 
-    this.backend.getCSVStatements()
-      .then(statements => {
-        console.log('Recieved CSV statments: ', statements);
-        this.handleNewStatements(statements);
-      })
-      .catch(err => {
-        console.error('Error loading CSV statements', err);
-      })
+  private async loadCsvStatements() {
+    try {
+      const statements = await this.backend.getCSVStatements();
+      this.handleNewStatements(statements);
+    }
+    catch (err) {
+      console.error('Error loading CSV statements', err);
+    }
+  }
+
+  private async loadXMLStatements() {
+    try {
+      const statements = await this.backend.getXMLStatements();
+      this.handleNewStatements(statements);
+    }
+    catch (err) {
+      console.error('Error loading xml statements', err);
+    }
   }
 
   /**
@@ -84,11 +69,8 @@ export class StatementsService {
    * @param statements 
    */
   private handleNewStatements(statements: StatementRecord[]) {
-    const _statements: StatementRecord[] = [];
-
-    statements.forEach(element => {
-      this.checkStatementValidity(element);
-      _statements.push(element);
+    const _statements: StatementRecord[] = statements.map(record => {
+      return this.checkStatementValidity(record);
     });
 
     _statements.length && this.addStatements(_statements);
@@ -98,25 +80,32 @@ export class StatementsService {
    * Checks the statement validity
    * @param statement 
    */
-  private checkStatementValidity(statement: StatementRecord) {
-    statement.isValid = true;
+  private checkStatementValidity(statement: StatementRecord): StatementRecord {
     // Check if reference already exists
     if (this.statementsMap[statement.reference]) {
-      console.error("found duplicate reference", statement.reference);
-      statement.isValid = false;   
-      return;   
+      return this.updateStatementStatus(statement, StatementErrorCode.notUnique);
     }
 
     // Check the transaction balance
     if (!this.isBalanceValid(statement)) {
-      console.error("found unbalanced statement", statement);
-      statement.isValid = false;
-      return;
+      return this.updateStatementStatus(statement, StatementErrorCode.unbalanced);
     }
 
     // Save reference
-    
     this.statementsMap[statement.reference] = statement.accountNumber;
+    return this.updateStatementStatus(statement, StatementErrorCode.noError);
+  }
+
+  /**
+   * Updates the statement status according to the error code
+   * @param statement 
+   * @param errorCode 
+   */
+  private updateStatementStatus(statement: StatementRecord, errorCode: StatementErrorCode): StatementRecord {
+    statement.isValid = errorCode === StatementErrorCode.noError,
+      statement.errorCode = errorCode;
+    statement.status = this.translateErrorCode(errorCode);
+    return statement;
   }
 
   /**
@@ -125,8 +114,21 @@ export class StatementsService {
    */
   private isBalanceValid(statement: StatementRecord) {
     const { mutation, startBalance, endBalance } = statement;
-    if (roundToTwo(startBalance + mutation) === endBalance) {
-      return true;
+    return roundToTwo(startBalance + mutation) === endBalance;
+  }
+
+  /**
+   * Translates the validity error code to string
+   * @param error 
+   */
+  private translateErrorCode(error: StatementErrorCode): string {
+    switch (error) {
+      case StatementErrorCode.noError:
+        return 'Valid ';
+      case StatementErrorCode.notUnique:
+        return 'Not Unique ';
+      case StatementErrorCode.unbalanced:
+        return 'Unblanaced ';
     }
   }
 
@@ -136,6 +138,6 @@ export class StatementsService {
    */
   private addStatements(statements) {
     const oldStatements = this._statements.getValue().toArray();
-    this._statements.next(List([...statements, ...oldStatements]));    
+    this._statements.next(List([...statements, ...oldStatements]));
   }
 }
