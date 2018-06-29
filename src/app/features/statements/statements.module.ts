@@ -5,10 +5,11 @@ import { StatementsComponent } from './statements.component';
 import { DemoMaterialModule } from '../../material/material.module'
 import { ComponentsModule } from '../../components/components.module'
 import { PapaParseModule } from 'ngx-papaparse';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
-    exports: [
-        StatementsComponent,
+    declarations: [
+        StatementsComponent
     ],
     providers: [
         StatementsService,
@@ -18,9 +19,11 @@ import { PapaParseModule } from 'ngx-papaparse';
         DemoMaterialModule,
         ComponentsModule,
         PapaParseModule,
+        CommonModule
     ],
-    declarations: [
+    exports: [
         StatementsComponent,
     ],
+    
 })
 export class StatementsModule { }

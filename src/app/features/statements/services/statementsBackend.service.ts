@@ -18,9 +18,9 @@ const CSV_RECORDS_URL = "../assets/mockData/csv/records.csv";
 export class StatementsBackendService {
 
     private _xmlStatements: BehaviorSubject<List<StatementRecord>> = new BehaviorSubject(List([]));
+    private ngxXml2jsonService: NgxXml2jsonService = new NgxXml2jsonService();
 
     constructor(private http: HttpClient,
-        private ngxXml2jsonService: NgxXml2jsonService,
         private papa: PapaParseService) {
     }
 
@@ -52,7 +52,7 @@ export class StatementsBackendService {
         const fieldNames = data.shift().map(camelize);
 
         // Create records according to fieldNames
-        return data.map(this.createStatementRecord(fieldNames)).filter(this.hasReference);
+        return data.map(this.createStatementRecordFromCsv(fieldNames)).filter(this.hasReference);
     }
 
     private parseStatementsXml(xmlString): StatementRecord[] {
@@ -65,17 +65,26 @@ export class StatementsBackendService {
             throwError('failed to parse xml statements - no data');
         }
 
+        //The object is not an array - try to create a single record
+        if (!Array.isArray(rawStatements)) {
+            return [this.createStatementRecordFromXml()(rawStatements)];
+        }
+
         //Map over the data 
         return rawStatements
-            .map(record => {
-                const reference = record['@attributes'] ? record['@attributes'].reference : '';
-                const { accountNumber, description, startBalance, mutation, endBalance } = record;
-                return this.mapObjectToStatement({ reference, accountNumber, description, startBalance, mutation, endBalance });
-            })
+            .map(this.createStatementRecordFromXml())
             .filter((record: StatementRecord) => record.reference)
     }
 
-    private createStatementRecord(fieldNames): any {
+    private createStatementRecordFromXml() {
+        return (record) => {
+            const reference = record['@attributes'] ? record['@attributes'].reference : '';
+            const { accountNumber, description, startBalance, mutation, endBalance } = record;
+            return this.mapObjectToStatement({ reference, accountNumber, description, startBalance, mutation, endBalance });
+        }
+    }
+
+    private createStatementRecordFromCsv(fieldNames): any {
         return (record) => {
             const statement = fieldNames.reduce((statementRecord, field, index) => {
                 statementRecord[field] = record[index];
