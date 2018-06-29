@@ -8,6 +8,7 @@ import { NgxXml2jsonService } from 'ngx-xml2json';
 import { PapaParseService } from 'ngx-papaparse';
 import { asObservable } from "../../../../helpers/asObservable";
 import { roundToTwo } from "../../../../helpers/roundToTwo";
+import { camelize } from "../../../../helpers/camelize";
 import { StatementRecord } from '../statements.models';
 
 const XML_RECORDS_URL = "../assets/mockData/xml/records.xml";
@@ -24,7 +25,7 @@ export class StatementsBackendService {
     }
 
 
-    public getXMLStatements() {
+    public getXMLStatements(): Promise<StatementRecord[]> {
         return this.fetchData(XML_RECORDS_URL)
             .then(response => {
                 return this.parseStatementsXml(response);
@@ -47,12 +48,11 @@ export class StatementsBackendService {
             throwError('failed to parse CSV statements - no data');
         }
 
-        let statementsCSV: StatementRecord[] = [];
         // Get the csv table headers from first item
-        const fieldNames = data.shift().map(this.camelize);
+        const fieldNames = data.shift().map(camelize);
 
         // Create records according to fieldNames
-        return data.map(this.createStatementRecord(fieldNames)).filter(this.hasReference);        
+        return data.map(this.createStatementRecord(fieldNames)).filter(this.hasReference);
     }
 
     private parseStatementsXml(xmlString): StatementRecord[] {
@@ -75,10 +75,15 @@ export class StatementsBackendService {
             .filter((record: StatementRecord) => record.reference)
     }
 
-    private parseXml(xmlString) {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(xmlString, 'text/xml');
-        return this.ngxXml2jsonService.xmlToJson(xml);
+    private createStatementRecord(fieldNames): any {
+        return (record) => {
+            const statement = fieldNames.reduce((statementRecord, field, index) => {
+                statementRecord[field] = record[index];
+                return statementRecord;
+            }, <StatementRecord>{});
+
+            return this.mapObjectToStatement(statement)
+        }
     }
 
     private mapObjectToStatement(obj): StatementRecord {
@@ -97,19 +102,10 @@ export class StatementsBackendService {
             .toPromise();
     }
 
-    private createStatementRecord(fieldNames): any {
-        return (record) => {
-            const statement = fieldNames.reduce((statementRecord, field, index) => {
-                statementRecord[field] = record[index];
-                return statementRecord;
-            }, <StatementRecord>{});
-
-            return  this.mapObjectToStatement(statement)
-        }
-    }
-
-    private camelize(str) {
-        return (str.charAt(0).toLowerCase() + str.slice(1)).replace(' ', '');
+    private parseXml(xmlString) {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlString, 'text/xml');
+        return this.ngxXml2jsonService.xmlToJson(xml);
     }
 
     private hasReference(record) {
