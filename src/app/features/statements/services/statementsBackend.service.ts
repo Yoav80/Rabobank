@@ -39,7 +39,7 @@ export class StatementsBackendService {
             });
     }
 
-    private parseStatementsCSV(csv): StatementRecord[] {
+    public parseStatementsCSV(csv): StatementRecord[] {
         // Parse the CSV response with PapaParse library
         const parsedCSV = this.papa.parse(csv);
         const data = parsedCSV.data;
@@ -55,7 +55,7 @@ export class StatementsBackendService {
         return data.map(this.createStatementRecordFromCsv(fieldNames)).filter(this.hasReference);
     }
 
-    private parseStatementsXml(xmlString): StatementRecord[] {
+    public parseStatementsXml(xmlString): StatementRecord[] {
         // Parse XML using ngxXml2jsonService
         const obj: any = this.parseXml(xmlString);
         //get the records 

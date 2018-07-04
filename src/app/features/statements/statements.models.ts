@@ -15,3 +15,8 @@ export enum StatementErrorCode {
     unbalanced = 1,
     notUnique = 2
 }
+
+export enum FileType {
+    csv = "csv",
+    xml = "xml"
+}

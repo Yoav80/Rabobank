@@ -6,6 +6,13 @@
   <mat-toolbar-row>
     <span class="title-items">Valid items: {{numberOfValidItems}} </span>
     <span class="title-items invalid">Invalid items: {{numberOfInvalidItems}} </span>
+    <!-- <input type='file' accept='text/plain' (change)="openFile(event)"><br> -->
+    <div class="file_input">
+        <label class="image_input_button mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
+          <i class="material-icons">file_upload</i>
+          <input id="file_input_file" (change)="openFile(event)" style="display: none;" type="file" />
+        </label>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 

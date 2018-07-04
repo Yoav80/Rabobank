@@ -5,7 +5,7 @@ import { List } from 'immutable';
 import { asObservable } from "../../../../helpers/asObservable";
 import { StatementsBackendService } from './statementsBackend.service';
 import { roundToTwo } from "../../../../helpers/roundToTwo";
-import { StatementRecord, StatementErrorCode } from "../statements.models";
+import { StatementRecord, StatementErrorCode, FileType } from "../statements.models";
 
 @Injectable()
 export class StatementsService {
@@ -26,12 +26,12 @@ export class StatementsService {
 
   public get columns() {
     return [
-      { field: 'reference', display: 'Reference' }, 
+      { field: 'reference', display: 'Reference' },
       { field: 'status', display: 'Status' },
-      { field: 'accountNumber', display: 'Account' }, 
-      { field: 'description', display: 'Description' }, 
+      { field: 'accountNumber', display: 'Account' },
+      { field: 'description', display: 'Description' },
       { field: 'startBalance', display: 'Start Balance' },
-      { field: 'endBalance', display: 'End Balance' }, 
+      { field: 'endBalance', display: 'End Balance' },
       { field: 'mutation', display: 'Mutation' }
     ];
   }
@@ -42,6 +42,33 @@ export class StatementsService {
   private loadInitialData() {
     this.loadCsvStatements();
     this.loadXMLStatements();
+  }
+
+  public loadFileStatements(type: FileType, fileStatements: string) {
+    this.statementsMap = {};
+    this.clearStatements();
+
+    switch (type) {
+      case FileType.csv: {
+        const statements = this.backend.parseStatementsCSV(fileStatements);
+        this.handleNewStatements(statements);
+        break;
+      }
+      case FileType.xml: {
+        const statements = this.backend.parseStatementsXml(fileStatements);
+        this.handleNewStatements(statements);
+        break;
+      }
+    }
+  }
+
+  public getExtension(str): any {
+    const ext = str.split('.').pop().toLowerCase();
+    for(let type in FileType) {
+      if (FileType[type] === ext) {
+        return type
+      }
+    }
   }
 
   private async loadCsvStatements() {
@@ -139,5 +166,9 @@ export class StatementsService {
   private addStatements(statements) {
     const oldStatements = this._statements.getValue().toArray();
     this._statements.next(List([...statements, ...oldStatements]));
+  }
+
+  private clearStatements() {
+    this._statements.next(List([]));    
   }
 }
