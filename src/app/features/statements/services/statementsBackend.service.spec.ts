@@ -49,7 +49,7 @@ const csvMockJson = {
     startBalance: 1,
     mutation: -2,
     endBalance: -1
-}
+};
 
 const xmlMock = `<records>
 <record reference="1">

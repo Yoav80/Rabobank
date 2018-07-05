@@ -17,6 +17,6 @@ export enum StatementErrorCode {
 }
 
 export enum FileType {
-    csv = "csv",
-    xml = "xml"
+    csv = 'csv',
+    xml = 'xml'
 }

@@ -28,7 +28,7 @@ export class ListComponent implements OnInit, OnChanges {
 
   getHeaderLabel(col) {
     const def = this.columnsDef.find(column => {
-      return column.field === col
+      return column.field === col;
     });
 
     return def.display;

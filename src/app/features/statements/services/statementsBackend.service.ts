@@ -6,13 +6,13 @@ import { catchError, retry, tap } from 'rxjs/operators';
 import { List } from 'immutable';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import { PapaParseService } from 'ngx-papaparse';
-import { asObservable } from "../../../../helpers/asObservable";
-import { roundToTwo } from "../../../../helpers/roundToTwo";
-import { camelize } from "../../../../helpers/camelize";
+import { asObservable } from '../../../../helpers/asObservable';
+import { roundToTwo } from '../../../../helpers/roundToTwo';
+import { camelize } from '../../../../helpers/camelize';
 import { StatementRecord } from '../statements.models';
 
-const XML_RECORDS_URL = "../assets/mockData/xml/records.xml";
-const CSV_RECORDS_URL = "../assets/mockData/csv/records.csv";
+const XML_RECORDS_URL = '../assets/mockData/xml/records.xml';
+const CSV_RECORDS_URL = '../assets/mockData/csv/records.csv';
 
 @Injectable()
 export class StatementsBackendService {
@@ -58,22 +58,22 @@ export class StatementsBackendService {
     public parseStatementsXml(xmlString): StatementRecord[] {
         // Parse XML using ngxXml2jsonService
         const obj: any = this.parseXml(xmlString);
-        //get the records 
+        // Get the records
         const rawStatements = obj.records.record;
 
         if (!rawStatements) {
             throwError('failed to parse xml statements - no data');
         }
 
-        //The object is not an array - try to create a single record
+        // The object is not an array - try to create a single record
         if (!Array.isArray(rawStatements)) {
             return [this.createStatementRecordFromXml()(rawStatements)];
         }
 
-        //Map over the data 
+        // Map over the data
         return rawStatements
             .map(this.createStatementRecordFromXml())
-            .filter((record: StatementRecord) => record.reference)
+            .filter((record: StatementRecord) => record.reference);
     }
 
     private createStatementRecordFromXml() {
@@ -81,7 +81,7 @@ export class StatementsBackendService {
             const reference = record['@attributes'] ? record['@attributes'].reference : '';
             const { accountNumber, description, startBalance, mutation, endBalance } = record;
             return this.mapObjectToStatement({ reference, accountNumber, description, startBalance, mutation, endBalance });
-        }
+        };
     }
 
     private createStatementRecordFromCsv(fieldNames): any {
@@ -91,8 +91,8 @@ export class StatementsBackendService {
                 return statementRecord;
             }, <StatementRecord>{});
 
-            return this.mapObjectToStatement(statement)
-        }
+            return this.mapObjectToStatement(statement);
+        };
     }
 
     private mapObjectToStatement(obj): StatementRecord {
@@ -103,7 +103,7 @@ export class StatementsBackendService {
             startBalance: roundToTwo(obj.startBalance),
             mutation: roundToTwo(obj.mutation),
             endBalance: roundToTwo(obj.endBalance)
-        }
+        };
     }
 
     private fetchData(url): Promise<any> {

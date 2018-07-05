@@ -16,6 +16,17 @@
       "es2017",
       "dom"
     ],
-    "paths": { "stream": ["./node_modules/readable-stream/readable.js"] },
-  }
+    "paths": {
+      "stream": [
+        "./node_modules/readable-stream/readable.js"
+      ]
+    },
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
 }

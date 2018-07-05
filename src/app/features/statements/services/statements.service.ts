@@ -2,10 +2,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { List } from 'immutable';
-import { asObservable } from "../../../../helpers/asObservable";
+import { asObservable } from '../../../../helpers/asObservable';
 import { StatementsBackendService } from './statementsBackend.service';
-import { roundToTwo } from "../../../../helpers/roundToTwo";
-import { StatementRecord, StatementErrorCode, FileType } from "../statements.models";
+import { roundToTwo } from '../../../../helpers/roundToTwo';
+import { StatementRecord, StatementErrorCode, FileType } from '../statements.models';
 
 @Injectable()
 export class StatementsService {
@@ -64,9 +64,9 @@ export class StatementsService {
 
   public getExtension(str): any {
     const ext = str.split('.').pop().toLowerCase();
-    for(let type in FileType) {
+    for (const type in FileType) {
       if (FileType[type] === ext) {
-        return type
+        return type;
       }
     }
   }
@@ -75,8 +75,7 @@ export class StatementsService {
     try {
       const statements = await this.backend.getCSVStatements();
       this.handleNewStatements(statements);
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Error loading CSV statements', err);
     }
   }
@@ -85,27 +84,28 @@ export class StatementsService {
     try {
       const statements = await this.backend.getXMLStatements();
       this.handleNewStatements(statements);
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Error loading xml statements', err);
     }
   }
 
   /**
    * Handles new statements
-   * @param statements 
+   * @param statements
    */
   private handleNewStatements(statements: StatementRecord[]) {
     const _statements: StatementRecord[] = statements.map(record => {
       return this.checkStatementValidity(record);
     });
 
-    _statements.length && this.addStatements(_statements);
+    if (_statements.length) {
+      this.addStatements(_statements);
+    }
   }
 
   /**
    * Checks the statement validity
-   * @param statement 
+   * @param statement
    */
   private checkStatementValidity(statement: StatementRecord): StatementRecord {
     // Check if reference already exists
@@ -125,8 +125,8 @@ export class StatementsService {
 
   /**
    * Updates the statement status according to the error code
-   * @param statement 
-   * @param errorCode 
+   * @param statement
+   * @param errorCode
    */
   private updateStatementStatus(statement: StatementRecord, errorCode: StatementErrorCode): StatementRecord {
     statement.isValid = errorCode === StatementErrorCode.noError,
@@ -137,7 +137,7 @@ export class StatementsService {
 
   /**
    * Checks the statement's balance
-   * @param statement 
+   * @param statement
    */
   private isBalanceValid(statement: StatementRecord) {
     const { mutation, startBalance, endBalance } = statement;
@@ -146,7 +146,7 @@ export class StatementsService {
 
   /**
    * Translates the validity error code to string
-   * @param error 
+   * @param error
    */
   private translateErrorCode(error: StatementErrorCode): string {
     switch (error) {
@@ -161,7 +161,7 @@ export class StatementsService {
 
   /**
    * Adds new statements to the statements observable
-   * @param statements 
+   * @param statements
    */
   private addStatements(statements) {
     const oldStatements = this._statements.getValue().toArray();
@@ -169,6 +169,6 @@ export class StatementsService {
   }
 
   private clearStatements() {
-    this._statements.next(List([]));    
+    this._statements.next(List([]));
   }
 }

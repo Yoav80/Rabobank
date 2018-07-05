@@ -15,7 +15,7 @@ export class StatementsComponent implements OnInit {
   public numberOfValidItems = 0;
   public numberOfInvalidItems = 0;
 
-  private fileTypes = ['xml', 'csv'];  //acceptable file types
+  private fileTypes = ['xml', 'csv'];  // Acceptable file types
 
   constructor(public statmentsService: StatementsService) { }
 
@@ -43,12 +43,12 @@ export class StatementsComponent implements OnInit {
 
       reader.onload = () => {
         const text = reader.result;
-        this.statmentsService.loadFileStatements(extension, text)
+        this.statmentsService.loadFileStatements(extension, text);
       };
 
       reader.readAsText(files[0]);
     }
   }
 
-  
+
 }
